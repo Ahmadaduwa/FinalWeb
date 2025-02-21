@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Farm | Modern Agriculture Solution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="min-h-screen bg-gray-100">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo Section -->
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <span class="text-2xl font-light">SMART<span class="font-bold text-emerald-500">FARM</span></span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-4">
+                    <a href="./home.html" class="transition-colors px-3 py-1 text-emerald-500 font-semibold border-b-2 border-emerald-500">หน้าแรก</a>
+                    <a href="./dashboard.html" class="transition-colors px-3 py-1 text-gray-600 hover:text-emerald-500">แดชบอร์ดเซ็นเซอร์</a>
+                    <a href="./geoMappingPage.html" class="transition-colors px-3 py-1 text-gray-600 hover:text-emerald-500">แผนที่ฟาร์ม</a>
+                    <a href="./plantManagementPage.html" class="transition-colors px-3 py-1 text-gray-600 hover:text-emerald-500">จัดการพืช</a>
+                    <a href="./alertSystemPage.html" class="transition-colors px-3 py-1 text-gray-600 hover:text-emerald-500">ระบบแจ้งเตือน</a>
+                    <a href="./dataTrendsPage.html" class="transition-colors px-3 py-1 text-gray-600 hover:text-emerald-500">แนวโน้มข้อมูล</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="pt-24 container mx-auto px-6">
+        <!-- Home Page -->
+        <div x-show="currentPage === 'home'" x-transition>
+            <template x-teleport="#home-content">
+                <div>
+                    <h1 class="text-5xl font-light mb-6">
+                        The Future of <br />
+                        <span class="font-bold text-emerald-500">Smart Farming</span>
+                    </h1>
+                    <p class="text-gray-600 text-lg mb-8">
+                        เทคโนโลยีการเกษตรอัจฉริยะที่ช่วยให้คุณควบคุมและติดตามการเพาะปลูกได้อย่างแม่นยำ
+                    </p>
+                </div>
+            </template>
+        </div>
+
+        <!-- Sensor Dashboard -->
+        <div x-show="currentPage === 'sensorDashboard'" x-transition>
+            <h2 class="text-3xl mb-6">Comprehensive Sensor Data Dashboard</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">อุณหภูมิ</h3>
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">ความชื้น</h3>
+                    <canvas id="humidityChart"></canvas>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">ความเป็นกรด-ด่าง</h3>
+                    <canvas id="phChart"></canvas>
+                </div>
+            </div>
+            <script>
+                function initCharts() {
+                    const chartOptions = {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true } }
+                    };
+
+                    new Chart(document.getElementById('temperatureChart'), {
+                        type: 'line',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [{
+                                data: [28, 29, 27, 30, 26, 28, 29],
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: chartOptions
+                    });
+
+                    // Similar charts for humidity and pH
+                    new Chart(document.getElementById('humidityChart'), {
+                        type: 'line',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [{
+                                data: [65, 67, 63, 70, 62, 66, 68],
+                                borderColor: 'rgb(54, 162, 235)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: chartOptions
+                    });
+
+                    new Chart(document.getElementById('phChart'), {
+                        type: 'line',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [{
+                                data: [6.5, 6.7, 6.4, 6.8, 6.6, 6.5, 6.7],
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                }
+                initCharts();
+            </script>
+        </div>
+
+        <!-- Geospatial Farm Mapping -->
+        <div x-show="currentPage === 'geoMapping'" x-transition>
+            <h2 class="text-3xl mb-6">Geospatial Farm Mapping</h2>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div id="map" class="h-96 bg-gray-200 flex items-center justify-center">
+                    แผนที่ฟาร์มจะปรากฏที่นี่ (ต้องใช้ Google Maps API)
+                </div>
+            </div>
+        </div>
+
+        <!-- Plant Management Module -->
+        <div x-show="currentPage === 'plantManagement'" x-transition>
+            <h2 class="text-3xl mb-6">Plant Management Module</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">พริก</h3>
+                    <p>สถานะ: กำลังเติบโต</p>
+                    <p>อายุ: 45 วัน</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">มะเขือ</h3>
+                    <p>สถานะ: เตรียมเก็บเกี่ยว</p>
+                    <p>อายุ: 60 วัน</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">ผักกาด</h3>
+                    <p>สถานะ: เริ่มปลูก</p>
+                    <p>อายุ: 15 วัน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts and Notification System -->
+        <div x-show="currentPage === 'alertSystem'" x-transition>
+            <h2 class="text-3xl mb-6">Alerts and Notification System</h2>
+            <div class="space-y-4">
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <p class="font-semibold text-yellow-700">⚠️ ความชื้นต่ำ</p>
+                    <p>ต้องการระบบรดน้ำเพิ่มเติม</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <p class="font-semibold text-red-700">🚨 อุณหภูมิสูงผิดปกติ</p>
+                    <p>แนะนำให้ปรับระบบระบายอากาศ</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <p class="font-semibold text-green-700">✅ ระบบปกติ</p>
+                    <p>ไม่มีการแจ้งเตือนสำหรับพืชอื่นๆ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historical Data Trends -->
+        <div x-show="currentPage === 'dataTrends'" x-transition>
+            <h2 class="text-3xl mb-6">Historical Data Trends</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">แนวโน้มผลผลิต</h3>
+                    <canvas id="yieldTrendChart"></canvas>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="text-xl mb-4">การใช้น้ำ</h3>
+                    <canvas id="waterUsageChart"></canvas>
+                </div>
+            </div>
+            <script>
+                function initTrendCharts() {
+                    new Chart(document.getElementById('yieldTrendChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'ผลผลิต (กก.)',
+                                data: [50, 60, 75, 80, 90, 85],
+                                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                            }]
+                        },
+                        options: { responsive: true }
+                    });
+
+                    new Chart(document.getElementById('waterUsageChart'), {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'การใช้น้ำ (ลิตร)',
+                                data: [1000, 900, 850, 800, 750, 700],
+                                borderColor: 'rgb(54, 162, 235)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: { responsive: true }
+                    });
+                }
+                initTrendCharts();
+            </script>
+        </div>
+    </main>
+</body>
+
+</html>
