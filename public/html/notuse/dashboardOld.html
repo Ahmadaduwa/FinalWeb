@@ -1,21 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Smart Farm Dashboard</title>
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <!-- Leaflet.draw CSS & JS -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -24,35 +12,20 @@
             display: none;
             animation: fadeIn 0.3s ease-in;
         }
-
         .active-section {
             display: block;
         }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-
         .dashboard-card {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .dashboard-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
-
         .gradient-bg {
             background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
         }
@@ -61,7 +34,7 @@
 
 <body class="bg-gray-50">
     <div class="flex min-h-screen">
-        <!-- Sidebar (same as your existing one) -->
+        <!-- Sidebar -->
         <aside class="w-64 bg-gradient-to-b from-green-800 to-green-600 text-white">
             <div class="p-6">
                 <div class="flex items-center space-x-3">
@@ -71,29 +44,33 @@
             </div>
             <nav class="mt-6">
                 <ul>
-                    <li>
-                        <a href="./dashboard.html" class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-gauge-high"></i>
-                            <span>Dashboard</span>
-                        </a>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="dashboard">
+                        <i class="fas fa-gauge-high"></i>
+                        <span>Dashboard</span>
                     </li>
-                    <li>
-                        <a href="./map.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-map-location-dot"></i>
-                            <span>Plant Area</span>
-                        </a>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="plantArea">
+                        <i class="fas fa-map-location-dot"></i>
+                        <span>Plant Area</span>
                     </li>
-                    <li>
-                        <a href="./plantmanage.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-seedling"></i>
-                            <span>Plant Management</span>
-                        </a>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="plantInfo">
+                        <i class="fas fa-seedling"></i>
+                        <span>Plant Information</span>
                     </li>
-                    <li>
-                        <a href="./Alert.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-bell"></i>
-                            <span>Alerts</span>
-                        </a>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="plantGrowth">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Plant Growth</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="waterManagement">
+                        <i class="fas fa-droplet"></i>
+                        <span>Water Management</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="sensorData">
+                        <i class="fas fa-microchip"></i>
+                        <span>Sensor Data</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3" data-target="alerts">
+                        <i class="fas fa-bell"></i>
+                        <span>Alerts</span>
                     </li>
                 </ul>
             </nav>
@@ -154,14 +131,7 @@
                         <img id="weatherIcon" src="" alt="Weather Icon" class="w-20 h-20 hidden">
                     </div>
                 </section>
-                <!-- Map Section -->
-                <section class="bg-white shadow-lg rounded-xl p-6 mb-8 dashboard-card">
-                    <h3 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-map text-green-600 mr-2"></i>
-                        Farm Map
-                    </h3>
-                    <div id="map"></div>
-                </section>
+
                 <!-- Charts Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
@@ -194,47 +164,27 @@
                             <i class="fas fa-microchip text-gray-600 mr-2"></i>
                             ข้อมูลเซ็นเซอร์แบบเรียลไทม์
                         </h3>
+                        <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-download mr-2"></i>
+                            Export Data
+                        </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Timestamp</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Temperature (°C)</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Humidity (%)</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Soil Moisture (%)</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        pH</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Rainfall (mm)</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Nitrogen</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Phosphorus</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Potassium</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Organic Matter</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Wind Speed (m/s)</th>
-                                    <th
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        CO2 (ppm)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temperature (°C)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Humidity (%)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Soil Moisture (%)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">pH</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rainfall (mm)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nitrogen</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phosphorus</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Potassium</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organic Matter</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wind Speed (m/s)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CO2 (ppm)</th>
                                 </tr>
                             </thead>
                             <tbody id="realtimeData" class="bg-white divide-y divide-gray-200">
@@ -247,6 +197,4 @@
     </div>
 </body>
 <script src="./../js/dashboard.js"></script>
-<script src="./../js/map.js"></script>
-
 </html>

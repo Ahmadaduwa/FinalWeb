@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smart Farm Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-green-800 to-green-600 text-white">
+            <div class="p-6">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-leaf text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Smart Farm</h1>
+                </div>
+            </div>
+            <nav class="mt-6">
+                <ul>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+                        <i class="fas fa-gauge-high"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+                        <i class="fas fa-map-location-dot"></i>
+                        <span>Plant Area</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+                        <i class="fas fa-seedling"></i>
+                        <span>Plant Information</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+                        <i class="fas fa-droplet"></i>
+                        <span>Water Management</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+                        <i class="fas fa-microchip"></i>
+                        <span>Sensor Data</span>
+                    </li>
+                    <li class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+                        <i class="fas fa-bell"></i>
+                        <span>Alerts</span>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-auto">
+            <header class="mb-8">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-gauge-high text-3xl text-green-600"></i>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">Smart Farm Dashboard</h2>
+                        <h3 class="text-xl text-gray-600 mt-1">ภาพรวมข้อมูลการเกษตร</h3>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Weather Card -->
+            <section class="bg-white shadow-lg rounded-xl p-6 mb-8 dashboard-card">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-cloud text-blue-500 mr-2"></i>
+                            Weather Information
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-location-dot text-gray-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">Location</p>
+                                    <p class="font-semibold" id="weatherLocation">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-temperature-half text-red-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">Temperature</p>
+                                    <p class="font-semibold"><span id="weatherTemp">-</span>°C</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-droplet text-blue-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">Humidity</p>
+                                    <p class="font-semibold"><span id="weatherHumidity">-</span>%</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-wind text-gray-500"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">Wind Speed</p>
+                                    <p class="font-semibold"><span id="weatherWind">-</span> m/s</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Map Section -->
+            <section class="bg-white shadow-lg rounded-xl p-6 mb-8 dashboard-card">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-map text-green-600 mr-2"></i>
+                    Farm Map
+                </h3>
+                <div id="map"></div>
+            </section>
+
+            <!-- Sensor Data Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-temperature-half text-red-500 mr-2"></i>
+                        Temperature (°C)
+                    </h3>
+                    <canvas id="tempChart"></canvas>
+                </div>
+                <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-droplet text-blue-500 mr-2"></i>
+                        Humidity (%)
+                    </h3>
+                    <canvas id="humidityChart"></canvas>
+                </div>
+                <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-water text-green-500 mr-2"></i>
+                        Soil Moisture (%)
+                    </h3>
+                    <canvas id="soilMoistureChart"></canvas>
+                </div>
+                <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-cloud-rain text-blue-500 mr-2"></i>
+                        Rainfall (mm)
+                    </h3>
+                    <canvas id="rainFallChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Alert Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-red-500 text-white shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold mb-4">Simulate Critical Data</h3>
+                </div>
+                <button onclick="simulateCriticalDataRain()" class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold">High Rainfall</h3>
+                </button>
+                <button onclick="simulateCriticalDataTemp()" class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold">High Temperature</h3>
+                </button>
+                <button onclick="simulateCriticalDataMois()" class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
+                    <h3 class="text-xl font-semibold">Low Soil Moisture</h3>
+                </button>
+            </div>
+
+            <!-- Suggestion Card -->
+            <div id="suggestionCard" class="hidden bg-white shadow-lg rounded-xl p-6 dashboard-card">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Suggestion</h3>
+                    <button onclick="hideSuggestionCard()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p id="suggestionText" class="text-gray-700"></p>
+                <p id="suggestionS" class="text-gray-700 mt-2"></p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize charts
+        const maxDataPoints = 10;
+        const charts = {};
+        
+        ['temp', 'humidity', 'soilMoisture', 'rainFall'].forEach(type => {
+            const ctx = document.getElementById(`${type}Chart`).getContext('2d');
+            charts[type] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: type.charAt(0).toUpperCase() + type.slice(1),
+                        data: [],
+                        borderColor: type === 'temp' ? 'rgb(255, 99, 132)' :
+                                   type === 'humidity' ? 'rgb(54, 162, 235)' :
+                                   type === 'soilMoisture' ? 'rgb(153, 102, 255)' : 'rgb(37, 37, 240)',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    animation: { duration: 0 }
+                }
+            });
+        });
+
+        // Initialize map
+        const map = L.map('map').setView([54.565189, 34.882395], 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // WebSocket connection
+        const ws = new WebSocket('ws://localhost:3000');
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            updateCharts(data);
+            checkAlertConditions(data);
+        };
+
+        // Alert and suggestion functions
+        function checkAlertConditions(data) {
+            if (data.soil_moisture < 15) {
+                displayAlert('💦 Low soil moisture detected!');
+                showSuggestionCard('soil', data.soil_moisture);
+            }
+            if (data.rainfall > 8) {
+                displayAlert('⛈️ High rainfall detected!');
+                showSuggestionCard('rainfall', data.rainfall);
+            }
+            if (data.temperature > 32) {
+                displayAlert('🔥 High temperature detected!');
+                showSuggestionCard('temperature', data.temperature);
+            }
+        }
+
+        function displayAlert(message) {
+            const alert = document.createElement('div');
+            alert.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function showSuggestionCard(type, value) {
+            const suggestionCard = document.getElementById('suggestionCard');
+            const suggestionText = document.getElementById('suggestionText');
+            const suggestionS = document.getElementById('suggestionS');
+            
+            const suggestions = {
+                rainfall: {
+                    text: `Rainfall Alert ⛈️: ${value}% detected. Consider adjusting water management.`,
+                    plan: 'Adjust water plan for the next 3 hours ⛔️'
+                },
+                temperature: {
+                    text: `Heat Alert 🔥: ${value}°C detected. Plants may need extra care.`,
+                    plan: 'Increase water spraying on plants 💦'
+                },
+                soil: {
+                    text: `Soil Moisture Alert 🍂: ${value}% detected. Irrigation needed.`,
+                    plan: 'Adjust irrigation to maintain optimal moisture 💦'
+                }
+            };
+
+            suggestionText.textContent = suggestions[type].text;
+            suggestionS.textContent = `Plan: ${suggestions[type].plan}`;
+            suggestionCard.classList.remove('hidden');
+        }
+
+        function hideSuggestionCard() {
+            document.getElementById('suggestionCard').classList.add('hidden');
+        }
+
+        // Simulation functions
+        function simulateCriticalDataTemp() {
+            const testData = {
+              timestamp: new Date().toISOString(),
+              temperature: 70,      // high value to trigger heat alert
+              humidity: 50,         // normal value
+              soil_moisture: 40,    // normal value
+              ph: 6.5,
+              rainfall: 0
+            };
+            
+            updateRealtimeCharts(testData);
+            addRealtimeDataRow(testData);
+            checkAlertConditions(testData);
+          }
