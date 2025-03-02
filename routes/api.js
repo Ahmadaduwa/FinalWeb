@@ -268,4 +268,64 @@ router.get('/plant_areas', async (req, res) => {
   }
 });
 
+
+router.get("/sensor-history", (req, res) => {
+  const query = `
+    (SELECT 
+       sd.timestampPerHr AS timestamp,
+       sd.humidity,
+       sd.Soil_moisture AS soil_moisture,
+       sd.rainfall,
+       pa.Plantation_area
+     FROM sensor_data sd
+       JOIN plant_information pi ON sd.Plant_id = pi.Plant_id
+       JOIN plant_area pa ON pi.PA_id = pa.PA_id
+     WHERE pa.Plantation_area = 'Center'
+     ORDER BY sd.timestampPerHr DESC
+     LIMIT 50
+    )
+
+    UNION ALL
+
+    (SELECT 
+       sd.timestampPerHr AS timestamp,
+       sd.humidity,
+       sd.Soil_moisture AS soil_moisture,
+       sd.rainfall,
+       pa.Plantation_area
+     FROM sensor_data sd
+       JOIN plant_information pi ON sd.Plant_id = pi.Plant_id
+       JOIN plant_area pa ON pi.PA_id = pa.PA_id
+     WHERE pa.Plantation_area = 'North'
+     ORDER BY sd.timestampPerHr DESC
+     LIMIT 50
+    )
+
+    UNION ALL
+
+    (SELECT 
+       sd.timestampPerHr AS timestamp,
+       sd.humidity,
+       sd.Soil_moisture AS soil_moisture,
+       sd.rainfall,
+       pa.Plantation_area
+     FROM sensor_data sd
+       JOIN plant_information pi ON sd.Plant_id = pi.Plant_id
+       JOIN plant_area pa ON pi.PA_id = pa.PA_id
+     WHERE pa.Plantation_area = 'South'
+     ORDER BY sd.timestampPerHr DESC
+     LIMIT 50
+    )
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ Error fetching sensor history:", err);
+      return res.status(500).send(err);
+    }
+    // ส่งผลลัพธ์ในรูป JSON กลับไปยัง client
+    res.json(results);
+  });
+});
+
 module.exports = router;

@@ -1,192 +1,294 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Smart Farm Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .content-section {
-            display: none;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .active-section {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .dashboard-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .gradient-bg {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Farm Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .content-section {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+    .active-section {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .dashboard-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .gradient-bg {
+      background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+    }
+    .canV {
+      display: block !important;
+      width: 100% !important;
+      height: 300px !important;
+    }
+  </style>
 </head>
 
-<body class="bg-gray-50">
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-gradient-to-b from-green-800 to-green-600 text-white">
-            <div class="p-6">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-leaf text-2xl"></i>
-                    <h1 class="text-2xl font-bold">Smart Farm</h1>
-                </div>
-            </div>
-            <nav class="mt-6">
-                <ul>
-                    <li>
-                        <a href="./dashboard.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-gauge-high"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./map.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-map-location-dot"></i>
-                            <span>Plant Area</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./plantmanage.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-seedling"></i>
-                            <span>Plant Management</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./Alert.html" class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                            <i class="fas fa-bell"></i>
-                            <span>Alerts</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-8 overflow-auto">
-            <section id="dashboard" class="content-section active-section">
-                <header class="mb-8">
-                    <div class="flex items-center space-x-3">
-                        <i class="fas fa-gauge-high text-3xl text-green-600"></i>
-                        <div>
-                            <h2 class="text-3xl font-bold text-gray-800">Dashboard</h2>
-                            <h3 class="text-xl text-gray-600 mt-1">ภาพรวมข้อมูลการเกษตร</h3>
-                        </div>
-                    </div>
-                </header>
-
-                <!-- Charts Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-temperature-half text-red-500 mr-2"></i>
-                            Temperature (°C)
-                        </h3>
-                        <canvas id="tempChart"></canvas>
-                    </div>
-                    <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-droplet text-blue-500 mr-2"></i>
-                            Humidity (%)
-                        </h3>
-                        <canvas id="humidityChart"></canvas>
-                    </div>
-                    <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-water text-green-500 mr-2"></i>
-                            Soil Moisture (%)
-                        </h3>
-                        <canvas id="soilMoistureChart"></canvas>
-                    </div>
-                    <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-water text-cyan-500 mr-2"></i>
-                            Rainfall (%)
-                        </h3>
-                        <canvas id="rainFallChart"></canvas>
-                    </div>
-
-                    <div class="bg-red-500 shadow-lg rounded-xl p-6 dashboard-card">
-                        <h1 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-notify text-red-500 mr-2"></i>
-                            Simulate Critical Data
-                        </h1>
-                    </div>
-
-                    <button onclick="simulateCriticalDataRain()">
-                        <div class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
-                            <h3 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-temperature-half text-red-500 mr-2"></i>
-                                High rainfall
-                            </h3>
-                        </div>
-                    </button>
-                    <button onclick="simulateCriticalDataTemp()">
-                        <div class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
-                            <h3 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-droplet text-blue-500 mr-2"></i>
-                                High temperature
-                            </h3>
-                        </div>
-                    </button>
-                    <button onclick="simulateCriticalDataMois()">
-                        <div class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
-                            <h3 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-water text-green-500 mr-2"></i>
-                                Low soil moisture
-                            </h3>
-                        </div>
-                    </button>
-
-                </div>
-
-                <!-- Suggestion Card with "Monitor" Look (hidden by default) -->
-
-                <div id="suggestionCard" class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
-                    <h3 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-temperature-half text-red-500 mr-2"></i>
-                        <!-- Monitor Title Bar -->
-                        <div
-                            class="flex items-center justify-between bg-white-800 rounded-t-xl px-4 py-2 border-b border-white-700">
-                            <h4 class="text-lg font-bold">Suggestion</h4>
-                            <button onclick="hideSuggestionCard()" class="text-400 hover:text-black">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <!-- Monitor Screen Content -->
-                        <div class="p-4">
-                            <h3 id="suggestionText" class="text-xl"></h3>
-                            <h3 id="suggestionS" class="text-xl"></h3>
-                        </div>
-                    </h3>
-                </div>
-
-
-            </section>
-        </main>
+<body class="bg-gray-50 min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
+  <!-- Desktop Sidebar: แสดงเฉพาะบนหน้าจอ lg ขึ้นไป -->
+  <aside class="hidden lg:block w-64 bg-gradient-to-b from-green-800 to-green-600 text-white flex-shrink-0">
+    <div class="p-6">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-leaf text-2xl"></i>
+        <h1 class="text-2xl font-bold">Smart Farm</h1>
+      </div>
     </div>
-</body>
-<script src="../js/test.js"></script>
+    <nav class="mt-6">
+      <ul>
+        <li>
+          <a href="./dashboard.html"
+             class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-gauge-high"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="./map.html"
+             class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-map-location-dot"></i>
+            <span>Plant Area</span>
+          </a>
+        </li>
+        <li>
+          <a href="./plantmanage.html"
+             class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-seedling"></i>
+            <span>Plant Management</span>
+          </a>
+        </li>
+        <li>
+          <a href="./Alert.html"
+             class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
 
+  <!-- Container สำหรับ Mobile Header, Mobile Sidebar และ Main Content -->
+  <div class="flex-1 flex flex-col relative">
+    <!-- Mobile Header: แสดงเฉพาะในหน้าจอที่น้อยกว่า lg (รวม iPad portrait และมือถือ) -->
+    <header class="flex items-center justify-between p-4 bg-white shadow-md lg:hidden">
+      <button id="mobileMenuButton" onclick="openMobileSidebar()">
+        <i class="fas fa-bars text-2xl text-green-600"></i>
+      </button>
+      <h2 class="text-xl font-bold text-gray-800">Dashboard</h2>
+    </header>
+
+    <!-- Mobile Sidebar (Overlay) -->
+    <aside id="mobileSidebar"
+           class="z-50 fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-green-800 to-green-600 text-white
+                  transform -translate-x-full lg:hidden transition-transform duration-300">
+      <div class="p-6 relative">
+        <button id="closeMobileSidebarButton" class="absolute top-4 right-4 text-white" onclick="closeMobileSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="flex items-center space-x-3">
+          <i class="fas fa-leaf text-2xl"></i>
+          <h1 class="text-2xl font-bold">Smart Farm</h1>
+        </div>
+      </div>
+      <nav class="mt-6">
+        <ul>
+          <li>
+            <a href="./dashboard.html"
+               class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-gauge-high"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="./map.html"
+               class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-map-location-dot"></i>
+              <span>Plant Area</span>
+            </a>
+          </li>
+          <li>
+            <a href="./plantmanage.html"
+               class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-seedling"></i>
+              <span>Plant Management</span>
+            </a>
+          </li>
+          <li>
+            <a href="./Alert.html"
+               class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-bell"></i>
+              <span>Alerts</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-auto">
+      <section id="dashboard" class="content-section active-section">
+        <header class="mb-8">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-gauge-high text-3xl text-green-600"></i>
+            <div>
+              <h2 class="text-3xl font-bold text-gray-800">Dashboard</h2>
+              <h3 class="text-xl text-gray-600 mt-1">ภาพรวมข้อมูลการเกษตร</h3>
+            </div>
+          </div>
+        </header>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+            <h3 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-temperature-half text-red-500 mr-2"></i>
+              Temperature (°C)
+            </h3>
+            <canvas id="tempChart"></canvas>
+          </div>
+          <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+            <h3 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-droplet text-blue-500 mr-2"></i>
+              Humidity (%)
+            </h3>
+            <canvas id="humidityChart"></canvas>
+          </div>
+          <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+            <h3 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-water text-green-500 mr-2"></i>
+              Soil Moisture (%)
+            </h3>
+            <canvas id="soilMoistureChart"></canvas>
+          </div>
+          <div class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+            <h3 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-water text-cyan-500 mr-2"></i>
+              Rainfall (%)
+            </h3>
+            <canvas id="rainFallChart"></canvas>
+          </div>
+
+          <div class="bg-red-500 shadow-lg rounded-xl p-6 dashboard-card">
+            <h1 class="text-xl font-semibold mb-4 flex items-center">
+              <i class="fas fa-notify text-red-500 mr-2"></i>
+              Simulate Critical Data
+            </h1>
+          </div>
+
+          <button onclick="simulateCriticalDataRain()">
+            <div class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
+              <h3 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-temperature-half text-red-500 mr-2"></i>
+                High rainfall
+              </h3>
+            </div>
+          </button>
+          <button onclick="simulateCriticalDataTemp()">
+            <div class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
+              <h3 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-droplet text-blue-500 mr-2"></i>
+                High temperature
+              </h3>
+            </div>
+          </button>
+          <button onclick="simulateCriticalDataMois()">
+            <div class="bg-red-100 shadow-lg rounded-xl p-6 dashboard-card">
+              <h3 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-water text-green-500 mr-2"></i>
+                Low soil moisture
+              </h3>
+            </div>
+          </button>
+        </div>
+
+        <!-- Suggestion Card -->
+        <div id="suggestionCard" class="bg-white shadow-lg rounded-xl p-6 dashboard-card">
+          <h3 class="text-xl font-semibold mb-4 flex items-center">
+            <i class="fas fa-temperature-half text-red-500 mr-2"></i>
+            <!-- Monitor Title Bar -->
+            <div class="flex items-center justify-between bg-white-800 rounded-t-xl px-4 py-2 border-b border-white-700">
+              <h4 class="text-lg font-bold">Suggestion</h4>
+              <button onclick="hideSuggestionCard()" class="text-400 hover:text-black">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <!-- Monitor Screen Content -->
+            <div class="p-4">
+              <h3 id="suggestionText" class="text-xl"></h3>
+              <h3 id="suggestionS" class="text-xl"></h3>
+            </div>
+          </h3>
+        </div>
+      </section>
+
+      <!-- ภูมิภาคต่าง ๆ (Center, North, South) -->
+      <section>
+        <!-- Center -->
+        <div class="p-6 bg-white shadow-lg rounded-xl">
+          <h3 class="text-xl font-semibold mb-4">Center</h3>
+          <div class="grid grid-cols-1 gap-4">
+            <div class="p-5">
+                <canvas id="Center-humidity" class="canV"></canvas>
+            </div>
+            <div class="p-5">
+                <canvas id="Center-moisture" class="canV"></canvas>
+            </div>
+            <div class="p-5">
+                <canvas id="Center-rainfall" class="canV"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- North -->
+        <div class="p-6 bg-white shadow-lg rounded-xl mt-6">
+          <h3 class="text-xl font-semibold mb-4">North</h3>
+          <div class="grid grid-cols-1 gap-4">
+            <div class="p-5">
+                <canvas id="North-humidity" class="canV"></canvas>
+            </div>
+            <div class="p-5">
+                <canvas id="North-moisture" class="canV"></canvas>
+            </div>
+            <div class="p-5">
+                <canvas id="North-rainfall" class="canV"></canvas>
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- South -->
+        <div class="p-6 bg-white shadow-lg rounded-xl mt-6">
+          <h3 class="text-xl font-semibold mb-4">South</h3>
+          <div class="grid grid-cols-1 gap-4">
+            <div class="p-5">
+                <canvas id="South-humidity" class="canV"></canvas>
+            </div>
+            <div class="p-5">
+                <canvas id="South-moisture" class="canV"></canvas>
+            </div>
+            <div class="p-5">
+                <canvas id="South-rainfall" class="canV"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./../js/Aleart.js"></script>
+  <script src="./../js/nav.js"></script>
+</body>
 </html>

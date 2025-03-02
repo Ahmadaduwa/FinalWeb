@@ -1,110 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Farm Mapping with Square Boundaries</title>
-    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farm Mapping with Square Boundaries</title>
 
-    <!-- Leaflet.draw CSS & JS -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-      #map {
-        height: 90vh;
-        width: 100%;
-      }
-      .content-section {
-        display: none;
-        animation: fadeIn 0.3s ease-in;
-      }
-      .active-section {
-        display: block;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-      .dashboard-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-      .dashboard-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      .gradient-bg {
-        background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-      }
-    </style>
-  </head>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+  <!-- Leaflet.draw CSS & JS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
-  <body class="bg-gray-100 min-h-screen flex">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Sidebar (same as your existing one) -->
-    <aside class="w-64 bg-gradient-to-b from-green-800 to-green-600 text-white">
-      <div class="p-6">
-          <div class="flex items-center space-x-3">
-              <i class="fas fa-leaf text-2xl"></i>
-              <h1 class="text-2xl font-bold">Smart Farm</h1>
-          </div>
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    /* กำหนดขนาดของแผนที่ให้ยืดเต็มความกว้าง-สูงตามพื้นที่ที่จัดไว้ */
+    #map {
+      height: 85vh;
+      width: 100%;
+      z-index: 1;
+    }
+
+    .dashboard-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ตัวอย่าง gradient background */
+    .gradient-bg {
+      background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
+  <!-- Sidebar (Desktop) -->
+  <aside id="sidebar" class="hidden md:block w-64 bg-gradient-to-b from-green-800 to-green-600 text-white">
+    <div class="p-6">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-leaf text-2xl"></i>
+        <h1 class="text-2xl font-bold">Smart Farm</h1>
       </div>
-      <nav class="mt-6">
-          <ul>
-              <li>
-                  <a href="./dashboard.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                      <i class="fas fa-gauge-high"></i>
-                      <span>Dashboard</span>
-                  </a>
-              </li>
-              <li>
-                  <a href="./map.html" class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                      <i class="fas fa-map-location-dot"></i>
-                      <span>Plant Area</span>
-                  </a>
-              </li>
-              <li>
-                  <a href="./plantmanage.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                      <i class="fas fa-seedling"></i>
-                      <span>Plant Management</span>
-                  </a>
-              </li>
-              <li>
-                  <a href="./Alert.html" class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
-                      <i class="fas fa-bell"></i>
-                      <span>Alerts</span>
-                  </a>
-              </li>
-          </ul>
-      </nav>
+    </div>
+    <nav class="mt-6">
+      <ul>
+        <li>
+          <a href="./dashboard.html"
+            class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-gauge-high"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="./map.html"
+            class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-map-location-dot"></i>
+            <span>Plant Area</span>
+          </a>
+        </li>
+        <li>
+          <a href="./plantmanage.html"
+            class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-seedling"></i>
+            <span>Plant Management</span>
+          </a>
+        </li>
+        <li>
+          <a href="./Alert.html"
+            class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </aside>
 
-    <!-- Main Content -->
-  <main class="flex-1 h-screen">
-    <h1 class="text-3xl font-bold text-green-600 p-4">
-      Geospatial Farm Mapping 🌍🚜
-    </h1>
-    <!-- Map Container -->
-    <div id="map" class="bg-white shadow-md rounded-lg"></div>
-  </main>
+  <!-- Container ด้านขวา (รวม Mobile Header, Mobile Sidebar, Main Content) -->
+  <div class="flex-1 flex flex-col relative">
+    <!-- Header สำหรับ Mobile (แสดงเฉพาะในหน้าจอเล็ก) -->
+    <header class="flex items-center justify-between p-4 bg-white shadow-md md:hidden">
+      <button id="mobileMenuButton" onclick="openMobileSidebar()">
+        <i class="fas fa-bars text-2xl text-green-600"></i>
+      </button>
+      <h2 class="text-xl font-bold text-gray-800">Plant Management</h2>
+    </header>
 
-    <script src="../js/map.js"></script>
+    <!-- Mobile Sidebar -->
+    <aside id="mobileSidebar" class="z-50 absolute inset-y-0 left-0 w-64 bg-gradient-to-b from-green-800 to-green-600 
+                  text-white transform -translate-x-full md:hidden transition-transform duration-300">
+      <div class="p-6 relative">
+        <!-- ปุ่มปิด -->
+        <button id="closeMobileSidebarButton" class="absolute top-4 right-4 text-white" onclick="closeMobileSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="flex items-center space-x-3">
+          <i class="fas fa-leaf text-2xl"></i>
+          <h1 class="text-2xl font-bold">Smart Farm</h1>
+        </div>
+      </div>
+      <nav class="mt-6">
+        <ul>
+          <li>
+            <a href="./dashboard.html"
+              class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-gauge-high"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="./map.html"
+              class="px-6 py-3 bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-map-location-dot"></i>
+              <span>Plant Area</span>
+            </a>
+          </li>
+          <li>
+            <a href="./plantmanage.html"
+              class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-seedling"></i>
+              <span>Plant Management</span>
+            </a>
+          </li>
+          <li>
+            <a href="./Alert.html"
+              class="px-6 py-3 hover:bg-green-700 cursor-pointer transition-all flex items-center space-x-3">
+              <i class="fas fa-bell"></i>
+              <span>Alerts</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
 
-  </body>
+    <div>
+      
+      <!-- Main Content -->
+      <main class="flex-1 p-8 overflow-auto">
+        <header class="mb-8">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-map-marked-alt text-3xl text-green-600"></i>
+            <div>
+              <h2 class="text-3xl font-bold text-gray-800">Geospatial Farm Mapping</h2>
+              <h3 class="text-xl text-gray-600 mt-1">ระบบทำแผนที่ฟาร์มเชิงพื้นที่</h3>
+            </div>
+          </div>
+        </header>
+
+        <!-- Map Container -->
+        <div id="map" class="bg-white shadow-md rounded-lg"></div>
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Inline JavaScript สำหรับเปิด/ปิด Mobile Sidebar -->
+  <script src="./../js/nav.js"></script>
+
+  <!-- JS สำหรับการทำงานของแผนที่ -->
+  <script src="./../js/map.js"></script>
+
+</body>
+
 </html>

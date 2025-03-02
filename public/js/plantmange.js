@@ -30,9 +30,9 @@ let plants = [];
         return `
           <tr>
             <td class="px-6 py-4 whitespace-nowrap">${plant.plant_name || ""}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${plant.Soil_type || "-"}</td>
+            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">${plant.Soil_type || "-"}</td>
             <td class="px-6 py-4 whitespace-nowrap">${plant.Growth_stage || "-"}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${plant.Plant_season}</td>
+            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">${plant.Plant_season}</td>
             <td class="px-6 py-4 whitespace-nowrap">${plant.Plantation_area || "-"}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <button onclick="editPlant(${plant.Plant_id})" class="text-blue-600 hover:text-blue-900 mr-4">

@@ -174,23 +174,23 @@ function hideSuggestionCard() {
 function showSuggestionCard(type, value) {
   const suggestionCard = document.getElementById("suggestionCard");
   const suggestionText = document.getElementById("suggestionText");
-  
+
   if (type === "rainfall") {
     suggestionText.textContent = `Rainfall Alert⛈️⛈️ : ${value}% detected. Suggestion: Adjust your water plan for the next 3 hours – the heavy rain may mean your plants don’t need extra irrigation right now.`;
     suggestionS.textContent = `Plan : adjust your water plan for the next 3 hours⛔️⛔️.`;
   }
   else if (type === "temperature") {
     suggestionText.textContent = `Heat Alert🔥🔥 : ${value}°C detected. Suggestion: Consider adding shade or adjusting irrigation to help cool the plants.`;
-    suggestionS.textContent = `Plan : Increase Spraying water on the plants💦💦.`; 
+    suggestionS.textContent = `Plan : Increase Spraying water on the plants💦💦.`;
   }
   else if (type === "soil") {
     suggestionText.textContent = `Soil Moisture Alert🍂🍂 : ${value}% detected. Suggestion: Monitor and adjust irrigation to maintain optimal moisture.`;
     suggestionS.textContent = `Plan : Adjust irrigation to maintain optimal moisture💦💦.`;
   }
-  
+
   // Show the suggestion card (remove the 'hidden' class)
   suggestionCard.classList.remove("hidden");
-  
+
   // Optionally, auto-hide after a few seconds:
   // setTimeout(hideSuggestionCard, 7000);
 }
@@ -205,7 +205,7 @@ function simulateCriticalDataTemp() {
     ph: 6.5,
     rainfall: 0
   };
-  
+
   updateRealtimeCharts(testData);
   addRealtimeDataRow(testData);
   checkAlertConditions(testData);
@@ -220,7 +220,7 @@ function simulateCriticalDataMois() {
     ph: 6.5,
     rainfall: 0
   };
-  
+
   updateRealtimeCharts(testData);
   addRealtimeDataRow(testData);
   checkAlertConditions(testData);
@@ -235,7 +235,7 @@ function simulateCriticalDataRain() {
     ph: 6.5,
     rainfall: 50       // high rainfall to trigger rain alert
   };
-  
+
   updateRealtimeCharts(testData);
   addRealtimeDataRow(testData);
   checkAlertConditions(testData);
@@ -269,22 +269,29 @@ ws.onmessage = (event) => {
 function displayAlert(message) {
   let alertContainer = document.getElementById("alertContainer");
   if (!alertContainer) {
-      // Create container if it doesn't exist
-      alertContainer = document.createElement("div");
-      alertContainer.id = "alertContainer";
-      alertContainer.style.position = "fixed";
+    // Create container if it doesn't exist
+    alertContainer = document.createElement("div");
+    alertContainer.id = "alertContainer";
+    alertContainer.style.position = "fixed";
+    // ตรวจสอบขนาดหน้าจอโดยใช้ matchMedia
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      // หน้าจอเล็ก เช่น มือถือ
+      alertContainer.style.top = "75px";
+    } else {
+      // หน้าจอใหญ่ เช่น iPad, คอมพิวเตอร์
       alertContainer.style.top = "10px";
-      alertContainer.style.right = "10px";
-      alertContainer.style.zIndex = "1000";
-      document.body.appendChild(alertContainer);
+    }
+    alertContainer.style.right = "10px";
+    alertContainer.style.zIndex = "1000";
+    document.body.appendChild(alertContainer);
   }
   const alertBanner = document.createElement("div");
   alertBanner.className = "bg-red-200 text-red-800 p-3 mb-2 rounded shadow";
   alertBanner.textContent = message;
   alertContainer.appendChild(alertBanner);
-  
+
   // Remove the alert after 5 seconds
   setTimeout(() => {
-      alertBanner.remove();
+    alertBanner.remove();
   }, 5000);
 }
